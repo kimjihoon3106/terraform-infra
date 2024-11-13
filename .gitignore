@@ -1,0 +1,34 @@
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Terraform crash logs
+crash.log
+
+# Local .terraform directory
+.terraform/
+
+# .tfvars files containing sensitive information (credentials, secrets, etc.)
+*.tfvars
+
+# AWS credentials file
+.aws/
+
+# IDE files (e.g., VS Code, JetBrains)
+.vscode/
+.idea/
+
+# Operating system files (macOS, Windows)
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.bak
+*.swp
+
+# Terraform plan files (optional, but useful to keep private)
+*.tfplan
+
+# Terraform module cache
+.terraform.lock.hcl
