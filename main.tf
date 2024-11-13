@@ -24,9 +24,9 @@ resource "aws_instance" "Web Server" {
 }
 
 resource "aws_instance" "Web Server" {
-  ami           = "ami-00a08b445dc0ab8c1"  # Amazon Linux 2 AMI ID, 필요 시 최신 ID로 변경
+  ami           = "ami-00a08b445dc0ab8c1"
   instance_type = "t3.micro"
-  subnet_id     = "subnet-0824c31537806aea3"  # 퍼블릭 서브넷 ID
+  subnet_id     = "subnet-0824c31537806aea3"
 
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
 
@@ -39,13 +39,13 @@ resource "aws_instance" "Web Server" {
 resource "aws_security_group" "bastion_sg" {
   name_prefix = "bastion-sg"
   description = "Allow SSH access for Bastion Host"
-  vpc_id      = "vpc-04937fa64d00578ad"  # VPC ID로 변경 필요
+  vpc_id      = "vpc-04937fa64d00578ad"
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # 필요 시 접근 가능한 IP 범위를 좁혀서 설정
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -65,12 +65,12 @@ resource "aws_launch_template" "example" {
   name_prefix = "example-launch-template-"
   description = "Launch template for EC2 instance"
 
-  image_id = "ami-00a08b445dc0ab8c1"  # 적절한 AMI로 변경
+  image_id = "ami-00a08b445dc0ab8c1"
   instance_type = "t3.micro"
 
   network_interfaces {
-    associate_public_ip_address = false  # Private 서브넷에 배치되므로 퍼블릭 IP를 할당하지 않음
-    security_groups = [aws_security_group.ec2_sg.id]  # EC2 인스턴스의 보안 그룹
+    associate_public_ip_address = false 
+    security_groups = [aws_security_group.ec2_sg.id]
   }
 
   user_data = base64encode(data.template_file.test.rendered)
@@ -89,11 +89,11 @@ resource "aws_launch_template" "example" {
 
 resource "aws_lb"  "example_alb" {
   name = "example-alb"
-  internal = false  # 퍼블릭 ALB
+  internal = false 
   load_balancer_type = "application"
-  security_groups = [aws_security_group.alb_sg.id]  # ALB 보안 그룹
+  security_groups = [aws_security_group.alb_sg.id]
   subnets            = ["subnet-0824c31537806aea3", 
-                        "subnet-0c7842c6b59de714c"]  # 퍼블릭 서브넷에 배치
+                        "subnet-0c7842c6b59de714c"]  
 
   enable_deletion_protection = false
   idle_timeout = 60
@@ -118,7 +118,7 @@ resource "aws_lb_target_group" "example_target_group" {
   name = "example-target-group"
   port = 80
   protocol = "HTTP"
-  vpc_id = "vpc-04937fa64d00578ad"  # 적절한 VPC ID 사용
+  vpc_id = "vpc-04937fa64d00578ad" 
 
   health_check {
     path = "/"
@@ -138,8 +138,8 @@ resource "aws_autoscaling_group" "example_asg" {
   max_size = 3
   min_size = 1
   vpc_zone_identifier = [
-    "subnet-0bb511c0d6f762006",  # Private 서브넷
-    "subnet-0fc1ba3d67612d836"   # Private 서브넷
+    "subnet-0bb511c0d6f762006",  
+    "subnet-0fc1ba3d67612d836" 
   ]
 
   launch_template {
@@ -169,7 +169,7 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # 외부에서 80 포트로 접근 가능
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -183,13 +183,13 @@ resource "aws_security_group" "alb_sg" {
 resource "aws_security_group" "ec2_sg" {
   name        = "ec2-security-group"
   description = "Allow HTTP traffic to EC2 instances from ALB only"
-  vpc_id      = "vpc-04937fa64d00578ad"  # VPC ID
+  vpc_id      = "vpc-04937fa64d00578ad"
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    security_groups = [aws_security_group.alb_sg.id]  # ALB에서 오는 트래픽만 허용
+    security_groups = [aws_security_group.alb_sg.id]
   }
 
   egress {
