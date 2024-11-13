@@ -4,7 +4,7 @@ terraform-infra-AWS
 ### apply
 ```
 terraform init
-terraform plan -o=tfplan
+terraform plan -out=tfplan
 terraform start tfplan
 ```
 
